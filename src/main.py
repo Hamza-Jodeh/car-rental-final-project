@@ -320,6 +320,51 @@ def view_rental_history():
     connection.close()
 
 
+def view_payments():
+    """
+    Displays payment records with rental, customer, and vehicle information.
+    """
+    connection = get_connection()
+    cursor = connection.cursor()
+
+    cursor.execute("""
+        SELECT
+            Payment.payment_id,
+            Rental.rental_id,
+            Customer.first_name || ' ' || Customer.last_name AS customer_name,
+            Vehicle.make || ' ' || Vehicle.model AS vehicle_name,
+            Payment.amount,
+            Payment.payment_date,
+            Payment.payment_method
+        FROM Payment
+        JOIN Rental ON Payment.rental_id = Rental.rental_id
+        JOIN Customer ON Rental.customer_id = Customer.customer_id
+        JOIN Vehicle ON Rental.vehicle_id = Vehicle.vehicle_id
+        ORDER BY Payment.payment_id
+    """)
+
+    payments = cursor.fetchall()
+
+    print("\nPayment Records")
+    print("------------------------------------")
+
+    if len(payments) == 0:
+        print("No payment records found.")
+    else:
+        for payment in payments:
+            print(
+                f"Payment ID: {payment['payment_id']} | "
+                f"Rental ID: {payment['rental_id']} | "
+                f"Customer: {payment['customer_name']} | "
+                f"Vehicle: {payment['vehicle_name']} | "
+                f"Amount: ${payment['amount']:.2f} | "
+                f"Date: {payment['payment_date']} | "
+                f"Method: {payment['payment_method']}"
+            )
+
+    connection.close()
+
+
 def show_menu():
     """
     Displays the main menu for the car rental system.
@@ -371,6 +416,9 @@ def main():
 
         elif choice == "8":
             view_rental_history()
+
+        elif choice == "9":
+            view_payments()
 
         elif choice == "0":
             print("Goodbye.")
