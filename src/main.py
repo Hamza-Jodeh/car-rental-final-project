@@ -71,6 +71,38 @@ def search_vehicles():
     connection.close()
 
 
+def add_customer():
+    """
+    Adds a new customer to the database.
+    """
+    print("\nAdd New Customer")
+    print("------------------------------------")
+
+    first_name = input("First name: ")
+    last_name = input("Last name: ")
+    phone = input("Phone number: ")
+    email = input("Email address: ")
+    drivers_license = input("Driver's license number: ")
+
+    connection = get_connection()
+    cursor = connection.cursor()
+
+    try:
+        cursor.execute("""
+            INSERT INTO Customer (first_name, last_name, phone, email, drivers_license)
+            VALUES (?, ?, ?, ?, ?)
+        """, (first_name, last_name, phone, email, drivers_license))
+
+        connection.commit()
+        print("Customer added successfully.")
+
+    except Exception as error:
+        print("Error adding customer:", error)
+
+    finally:
+        connection.close()
+
+
 def show_menu():
     """
     Displays the main menu for the car rental system.
@@ -107,6 +139,9 @@ def main():
 
         elif choice == "3":
             search_vehicles()
+
+        elif choice == "4":
+            add_customer()
 
         elif choice == "0":
             print("Goodbye.")
