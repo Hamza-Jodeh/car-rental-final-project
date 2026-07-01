@@ -365,6 +365,57 @@ def view_payments():
     connection.close()
 
 
+def add_maintenance_record():
+    """
+    Adds a maintenance record for a vehicle and marks the vehicle as Maintenance.
+    """
+    print("\nAdd Maintenance Record")
+    print("------------------------------------")
+
+    try:
+        vehicle_id = int(input("Vehicle ID: "))
+        cost = float(input("Maintenance cost: "))
+    except ValueError:
+        print("Invalid input. Vehicle ID must be a number and cost must be a number.")
+        return
+
+    maintenance_date = input("Maintenance date YYYY-MM-DD: ")
+    description = input("Maintenance description: ")
+    status = input("Maintenance status Scheduled/Completed: ")
+
+    connection = get_connection()
+    cursor = connection.cursor()
+
+    try:
+        cursor.execute("SELECT * FROM Vehicle WHERE vehicle_id = ?", (vehicle_id,))
+        vehicle = cursor.fetchone()
+
+        if vehicle is None:
+            print("Vehicle not found.")
+            return
+
+        cursor.execute("""
+            INSERT INTO Maintenance (vehicle_id, maintenance_date, description, cost, status)
+            VALUES (?, ?, ?, ?, ?)
+        """, (vehicle_id, maintenance_date, description, cost, status))
+
+        cursor.execute("""
+            UPDATE Vehicle
+            SET status = 'Maintenance'
+            WHERE vehicle_id = ?
+        """, (vehicle_id,))
+
+        connection.commit()
+        print("Maintenance record added successfully.")
+        print("Vehicle status updated to Maintenance.")
+
+    except Exception as error:
+        print("Error adding maintenance record:", error)
+
+    finally:
+        connection.close()
+
+
 def show_menu():
     """
     Displays the main menu for the car rental system.
@@ -420,12 +471,15 @@ def main():
         elif choice == "9":
             view_payments()
 
+        elif choice == "10":
+            add_maintenance_record()
+
         elif choice == "0":
             print("Goodbye.")
             break
 
         else:
-            print("This feature will be added soon.")
+            print("Invalid choice. Please try again.")
 
 
 if __name__ == "__main__":
