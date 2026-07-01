@@ -103,6 +103,45 @@ def add_customer():
         connection.close()
 
 
+def add_vehicle():
+    """
+    Adds a new vehicle to the database.
+    """
+    print("\nAdd New Vehicle")
+    print("------------------------------------")
+
+    make = input("Make: ")
+    model = input("Model: ")
+
+    try:
+        year = int(input("Year: "))
+        daily_rate = float(input("Daily rental rate: "))
+    except ValueError:
+        print("Invalid number. Year must be a whole number and daily rate must be a number.")
+        return
+
+    license_plate = input("License plate number: ")
+    status = "Available"
+
+    connection = get_connection()
+    cursor = connection.cursor()
+
+    try:
+        cursor.execute("""
+            INSERT INTO Vehicle (make, model, year, license_plate, daily_rate, status)
+            VALUES (?, ?, ?, ?, ?, ?)
+        """, (make, model, year, license_plate, daily_rate, status))
+
+        connection.commit()
+        print("Vehicle added successfully.")
+
+    except Exception as error:
+        print("Error adding vehicle:", error)
+
+    finally:
+        connection.close()
+
+
 def show_menu():
     """
     Displays the main menu for the car rental system.
@@ -142,6 +181,9 @@ def main():
 
         elif choice == "4":
             add_customer()
+
+        elif choice == "5":
+            add_vehicle()
 
         elif choice == "0":
             print("Goodbye.")
