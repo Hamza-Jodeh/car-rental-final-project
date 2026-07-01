@@ -142,6 +142,74 @@ def add_vehicle():
         connection.close()
 
 
+def rent_vehicle():
+    """
+    Creates a rental record and marks the vehicle as Rented.
+    """
+    print("\nRent Vehicle")
+    print("------------------------------------")
+
+    try:
+        customer_id = int(input("Customer ID: "))
+        vehicle_id = int(input("Vehicle ID: "))
+        staff_id = int(input("Staff ID: "))
+    except ValueError:
+        print("Invalid ID. Customer ID, Vehicle ID, and Staff ID must be numbers.")
+        return
+
+    start_date = input("Start date YYYY-MM-DD: ")
+    end_date = input("End date YYYY-MM-DD: ")
+
+    connection = get_connection()
+    cursor = connection.cursor()
+
+    try:
+        cursor.execute("SELECT * FROM Customer WHERE customer_id = ?", (customer_id,))
+        customer = cursor.fetchone()
+
+        if customer is None:
+            print("Customer not found.")
+            return
+
+        cursor.execute("SELECT * FROM Staff WHERE staff_id = ?", (staff_id,))
+        staff = cursor.fetchone()
+
+        if staff is None:
+            print("Staff member not found.")
+            return
+
+        cursor.execute("SELECT * FROM Vehicle WHERE vehicle_id = ?", (vehicle_id,))
+        vehicle = cursor.fetchone()
+
+        if vehicle is None:
+            print("Vehicle not found.")
+            return
+
+        if vehicle["status"] != "Available":
+            print("Vehicle is not available for rent.")
+            return
+
+        cursor.execute("""
+            INSERT INTO Rental (customer_id, vehicle_id, staff_id, start_date, end_date, return_date, status)
+            VALUES (?, ?, ?, ?, ?, NULL, 'Active')
+        """, (customer_id, vehicle_id, staff_id, start_date, end_date))
+
+        cursor.execute("""
+            UPDATE Vehicle
+            SET status = 'Rented'
+            WHERE vehicle_id = ?
+        """, (vehicle_id,))
+
+        connection.commit()
+        print("Vehicle rented successfully.")
+
+    except Exception as error:
+        print("Error renting vehicle:", error)
+
+    finally:
+        connection.close()
+
+
 def show_menu():
     """
     Displays the main menu for the car rental system.
@@ -184,6 +252,9 @@ def main():
 
         elif choice == "5":
             add_vehicle()
+
+        elif choice == "6":
+            rent_vehicle()
 
         elif choice == "0":
             print("Goodbye.")
