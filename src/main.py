@@ -269,6 +269,57 @@ def return_vehicle():
         connection.close()
 
 
+def view_rental_history():
+    """
+    Displays rental history with customer, vehicle, and staff information.
+    """
+    connection = get_connection()
+    cursor = connection.cursor()
+
+    cursor.execute("""
+        SELECT
+            Rental.rental_id,
+            Customer.first_name || ' ' || Customer.last_name AS customer_name,
+            Vehicle.make || ' ' || Vehicle.model AS vehicle_name,
+            Vehicle.license_plate,
+            Staff.first_name || ' ' || Staff.last_name AS staff_name,
+            Rental.start_date,
+            Rental.end_date,
+            Rental.return_date,
+            Rental.status
+        FROM Rental
+        JOIN Customer ON Rental.customer_id = Customer.customer_id
+        JOIN Vehicle ON Rental.vehicle_id = Vehicle.vehicle_id
+        JOIN Staff ON Rental.staff_id = Staff.staff_id
+        ORDER BY Rental.rental_id
+    """)
+
+    rentals = cursor.fetchall()
+
+    print("\nRental History")
+    print("------------------------------------")
+
+    if len(rentals) == 0:
+        print("No rental records found.")
+    else:
+        for rental in rentals:
+            return_date = rental["return_date"] if rental["return_date"] else "Not returned yet"
+
+            print(
+                f"Rental ID: {rental['rental_id']} | "
+                f"Customer: {rental['customer_name']} | "
+                f"Vehicle: {rental['vehicle_name']} | "
+                f"Plate: {rental['license_plate']} | "
+                f"Staff: {rental['staff_name']} | "
+                f"Start: {rental['start_date']} | "
+                f"End: {rental['end_date']} | "
+                f"Return: {return_date} | "
+                f"Status: {rental['status']}"
+            )
+
+    connection.close()
+
+
 def show_menu():
     """
     Displays the main menu for the car rental system.
@@ -317,6 +368,9 @@ def main():
 
         elif choice == "7":
             return_vehicle()
+
+        elif choice == "8":
+            view_rental_history()
 
         elif choice == "0":
             print("Goodbye.")
