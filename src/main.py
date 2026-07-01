@@ -35,6 +35,42 @@ def view_available_vehicles():
     connection.close()
 
 
+def search_vehicles():
+    """
+    Searches vehicles by make or model.
+    """
+    search_term = input("Enter vehicle make or model to search: ")
+
+    connection = get_connection()
+    cursor = connection.cursor()
+
+    cursor.execute("""
+        SELECT vehicle_id, make, model, year, license_plate, daily_rate, status
+        FROM Vehicle
+        WHERE make LIKE ? OR model LIKE ?
+        ORDER BY vehicle_id
+    """, (f"%{search_term}%", f"%{search_term}%"))
+
+    vehicles = cursor.fetchall()
+
+    print("\nSearch Results")
+    print("------------------------------------")
+
+    if len(vehicles) == 0:
+        print("No vehicles matched your search.")
+    else:
+        for vehicle in vehicles:
+            print(
+                f"ID: {vehicle['vehicle_id']} | "
+                f"{vehicle['year']} {vehicle['make']} {vehicle['model']} | "
+                f"Plate: {vehicle['license_plate']} | "
+                f"Rate: ${vehicle['daily_rate']:.2f}/day | "
+                f"Status: {vehicle['status']}"
+            )
+
+    connection.close()
+
+
 def show_menu():
     """
     Displays the main menu for the car rental system.
@@ -68,6 +104,9 @@ def main():
 
         elif choice == "2":
             view_available_vehicles()
+
+        elif choice == "3":
+            search_vehicles()
 
         elif choice == "0":
             print("Goodbye.")
