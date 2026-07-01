@@ -1,4 +1,38 @@
-from database import initialize_database
+from database import initialize_database, get_connection
+
+
+def view_available_vehicles():
+    """
+    Displays all vehicles with status Available.
+    """
+    connection = get_connection()
+    cursor = connection.cursor()
+
+    cursor.execute("""
+        SELECT vehicle_id, make, model, year, license_plate, daily_rate, status
+        FROM Vehicle
+        WHERE status = 'Available'
+        ORDER BY vehicle_id
+    """)
+
+    vehicles = cursor.fetchall()
+
+    print("\nAvailable Vehicles")
+    print("------------------------------------")
+
+    if len(vehicles) == 0:
+        print("No vehicles are currently available.")
+    else:
+        for vehicle in vehicles:
+            print(
+                f"ID: {vehicle['vehicle_id']} | "
+                f"{vehicle['year']} {vehicle['make']} {vehicle['model']} | "
+                f"Plate: {vehicle['license_plate']} | "
+                f"Rate: ${vehicle['daily_rate']:.2f}/day | "
+                f"Status: {vehicle['status']}"
+            )
+
+    connection.close()
 
 
 def show_menu():
@@ -31,6 +65,9 @@ def main():
 
         if choice == "1":
             initialize_database()
+
+        elif choice == "2":
+            view_available_vehicles()
 
         elif choice == "0":
             print("Goodbye.")
