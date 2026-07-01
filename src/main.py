@@ -210,6 +210,65 @@ def rent_vehicle():
         connection.close()
 
 
+def return_vehicle():
+    """
+    Returns an active rental and marks the vehicle as Available.
+    """
+    print("\nReturn Vehicle")
+    print("------------------------------------")
+
+    try:
+        rental_id = int(input("Rental ID: "))
+    except ValueError:
+        print("Invalid rental ID. Rental ID must be a number.")
+        return
+
+    return_date = input("Return date YYYY-MM-DD: ")
+
+    connection = get_connection()
+    cursor = connection.cursor()
+
+    try:
+        cursor.execute("""
+            SELECT rental_id, vehicle_id, status
+            FROM Rental
+            WHERE rental_id = ?
+        """, (rental_id,))
+
+        rental = cursor.fetchone()
+
+        if rental is None:
+            print("Rental not found.")
+            return
+
+        if rental["status"] != "Active":
+            print("This rental is not active or has already been returned.")
+            return
+
+        vehicle_id = rental["vehicle_id"]
+
+        cursor.execute("""
+            UPDATE Rental
+            SET return_date = ?, status = 'Returned'
+            WHERE rental_id = ?
+        """, (return_date, rental_id))
+
+        cursor.execute("""
+            UPDATE Vehicle
+            SET status = 'Available'
+            WHERE vehicle_id = ?
+        """, (vehicle_id,))
+
+        connection.commit()
+        print("Vehicle returned successfully.")
+
+    except Exception as error:
+        print("Error returning vehicle:", error)
+
+    finally:
+        connection.close()
+
+
 def show_menu():
     """
     Displays the main menu for the car rental system.
@@ -255,6 +314,9 @@ def main():
 
         elif choice == "6":
             rent_vehicle()
+
+        elif choice == "7":
+            return_vehicle()
 
         elif choice == "0":
             print("Goodbye.")
