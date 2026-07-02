@@ -6,6 +6,10 @@ This project is a Car Rental Database and Management System created for CS4092 D
 
 The system allows staff members to manage customers, vehicles, rentals, payments, and maintenance records. It uses a relational database to store the data and a Python command-line interface to interact with the system.
 
+## Instructor Approval
+
+This project was approved as a combined final project for both CS4092 Database Design and Development and CS3003 Programming Languages.
+
 ## Courses
 
 - CS4092 Database Design and Development
@@ -13,6 +17,7 @@ The system allows staff members to manage customers, vehicles, rentals, payments
 
 ## Main Features
 
+- Initialize the database
 - View available vehicles
 - Search vehicles by make or model
 - Add new customers
@@ -20,12 +25,12 @@ The system allows staff members to manage customers, vehicles, rentals, payments
 - Rent vehicles
 - Return vehicles
 - View rental history
-- View payments
+- View payment records
 - Add maintenance records
 
 ## Database Tables
 
-The project will include the following tables:
+The project includes six main tables:
 
 1. Customer
 2. Staff
@@ -39,10 +44,12 @@ The project will include the following tables:
 - Python
 - SQLite
 - SQL
+- Git
 - GitHub
 
 ## Project Structure
 
+```text
 car-rental-final-project/
 
 - README.md
@@ -63,23 +70,52 @@ car-rental-final-project/
 - video/
   - demo-video-link.txt
 - screenshots/
+```
 
-## Database Design Connection
+## How to Run the Project
 
-For CS4092, this project includes requirements gathering, an ER diagram, relational schema design, SQL database implementation, sample data, SQL queries, and database interaction.
+### 1. Clone the Repository
 
-The database portion focuses on designing a relational database with clear entities, attributes, primary keys, foreign keys, relationships, and SQL queries.
+```bash
+git clone https://github.com/Hamza-Jodeh/car-rental-final-project.git
+```
 
-## Programming Languages Connection
+### 2. Go Into the Project Folder
 
-For CS3003, this project uses Python to demonstrate object-oriented programming and imperative programming.
+```bash
+cd car-rental-final-project
+```
 
-The program will include classes, methods, functions, and a command-line menu for interacting with the database. The project demonstrates how Python can be used to organize application logic and connect to a relational database.
+### 3. Run the Program
 
-## Planned CLI Menu
+```bash
+python src/main.py
+```
 
-The command-line program will include options such as:
+If `python` does not work, use:
 
+```bash
+python3 src/main.py
+```
+
+### 4. Initialize the Database
+
+When the menu opens, choose option:
+
+```text
+1. Initialize database
+```
+
+This creates the SQLite database and inserts sample data.
+
+## CLI Menu
+
+The command-line program includes this menu:
+
+```text
+====================================
+ Car Rental Management System
+====================================
 1. Initialize database
 2. View available vehicles
 3. Search vehicles
@@ -91,7 +127,85 @@ The command-line program will include options such as:
 9. View payments
 10. Add maintenance record
 0. Exit
+```
 
-## Project Status
+## SQL Files
 
-This project is currently in progress.
+The SQL database implementation is located in:
+
+```text
+sql/database.sql
+```
+
+This file includes:
+
+- Table creation statements
+- Primary keys
+- Foreign keys
+- Sample insert data
+
+The required SQL queries are located in:
+
+```text
+sql/queries.sql
+```
+
+This file includes multiple SQL queries, including multi-table queries using joins.
+
+## Database Design Connection
+
+For CS4092, this project includes:
+
+- Requirements gathering document
+- ER diagram
+- Relational schema design
+- SQL database implementation
+- Sample data
+- SQL queries
+- Python-based database interaction
+- Video demonstration
+
+The database portion focuses on designing a relational database with clear entities, attributes, primary keys, foreign keys, and relationships.
+
+## Programming Languages Connection
+
+For CS3003, this project uses Python to demonstrate:
+
+- Object-oriented programming
+- Classes and objects
+- Methods
+- Encapsulation
+- Imperative programming
+- Functions
+- Control structures
+- Error handling
+- Database interaction using SQLite
+
+The project includes model classes such as:
+
+- Customer
+- Staff
+- Vehicle
+- Rental
+- Payment
+- Maintenance
+
+The command-line menu demonstrates step-by-step application logic and interaction with the database.
+
+## Example Use Cases
+
+The system supports these use cases:
+
+1. A staff member views available vehicles.
+2. A staff member searches vehicles by make or model.
+3. A staff member adds a new customer.
+4. A staff member adds a new vehicle.
+5. A staff member rents a vehicle to a customer.
+6. A staff member returns a rented vehicle.
+7. A staff member views rental history.
+8. A staff member views payment records.
+9. A staff member adds a vehicle maintenance record.
+
+## Author
+
+Hamzah Jodeh
